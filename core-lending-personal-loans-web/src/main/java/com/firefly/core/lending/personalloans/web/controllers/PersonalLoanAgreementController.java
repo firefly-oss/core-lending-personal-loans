@@ -30,7 +30,9 @@ import reactor.core.publisher.Mono;
 
 import java.util.UUID;
 
-import jakarta.validation.Valid;@RestController
+import jakarta.validation.Valid;
+
+@RestController
 @RequestMapping("/api/v1/personal-loan-agreements")
 @Tag(name = "PersonalLoanAgreement", description = "Operations on personal loan agreements")
 @RequiredArgsConstructor
