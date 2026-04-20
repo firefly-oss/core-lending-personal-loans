@@ -1,0 +1,409 @@
+openapi: 3.0.1
+info:
+  title: core-lending-personal-loans
+  description: Personal Loans Core Application
+  contact:
+    name: Firefly Software Solutions Inc
+    email: dev@getfirefly.io
+  version: 1.0.0
+servers:
+  - url: http://core.getfirefly.io/personal-loans
+    description: Development Environment
+  - url: /
+    description: Local Development Environment
+tags:
+  - name: PersonalLoanAgreement
+    description: Operations on personal loan agreements
+paths:
+  /api/v1/personal-loan-agreements/{personalLoanAgreementId}:
+    get:
+      tags:
+        - PersonalLoanAgreement
+      summary: Get a personal loan agreement by ID
+      operationId: getById
+      parameters:
+        - name: personalLoanAgreementId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: X-Idempotency-Key
+          in: header
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PersonalLoanAgreementDTO'
+    put:
+      tags:
+        - PersonalLoanAgreement
+      summary: Update a personal loan agreement
+      operationId: update
+      parameters:
+        - name: personalLoanAgreementId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: X-Idempotency-Key
+          in: header
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
+          required: false
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PersonalLoanAgreementDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PersonalLoanAgreementDTO'
+    delete:
+      tags:
+        - PersonalLoanAgreement
+      summary: Delete a personal loan agreement
+      operationId: delete
+      parameters:
+        - name: personalLoanAgreementId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: X-Idempotency-Key
+          in: header
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+  /api/v1/personal-loan-agreements:
+    get:
+      tags:
+        - PersonalLoanAgreement
+      summary: List or search personal loan agreements
+      operationId: findAll
+      parameters:
+        - name: filterRequest
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/FilterRequestPersonalLoanAgreementDTO'
+        - name: X-Idempotency-Key
+          in: header
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PaginationResponsePersonalLoanAgreementDTO'
+    post:
+      tags:
+        - PersonalLoanAgreement
+      summary: Create a new personal loan agreement
+      operationId: create
+      parameters:
+        - name: X-Idempotency-Key
+          in: header
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
+          required: false
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PersonalLoanAgreementDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PersonalLoanAgreementDTO'
+components:
+  schemas:
+    PersonalLoanAgreementDTO:
+      required:
+        - agreementStatus
+        - applicationId
+        - loanPurpose
+        - rateType
+      type: object
+      properties:
+        personalLoanAgreementId:
+          type: string
+          format: uuid
+          readOnly: true
+        applicationId:
+          type: string
+          format: uuid
+        servicingCaseId:
+          type: string
+          format: uuid
+        proposedOfferId:
+          type: string
+          format: uuid
+        agreementStatus:
+          type: string
+          enum:
+            - DRAFT
+            - ACTIVE
+            - SUSPENDED
+            - CLOSED
+            - CANCELLED
+        loanPurpose:
+          type: string
+          enum:
+            - GENERAL_PURPOSE
+            - DEBT_CONSOLIDATION
+            - HOME_IMPROVEMENT
+            - MAJOR_PURCHASE
+            - MEDICAL_EXPENSE
+            - EDUCATION
+            - OTHER
+        purposeDescription:
+          maxLength: 500
+          minLength: 0
+          type: string
+        rateType:
+          type: string
+          enum:
+            - FIXED
+            - VARIABLE
+            - HYBRID
+        interestRate:
+          maximum: 100
+          exclusiveMaximum: false
+          minimum: 0
+          exclusiveMinimum: false
+          type: number
+        referenceRate:
+          maxLength: 50
+          minLength: 0
+          type: string
+        marginRate:
+          maximum: 50
+          exclusiveMaximum: false
+          minimum: -10
+          exclusiveMinimum: false
+          type: number
+        fixedRatePeriodMonths:
+          maximum: 480
+          minimum: 0
+          type: integer
+          format: int32
+        rateCap:
+          maximum: 100
+          exclusiveMaximum: false
+          minimum: 0
+          exclusiveMinimum: false
+          type: number
+        rateFloor:
+          maximum: 100
+          exclusiveMaximum: false
+          minimum: 0
+          exclusiveMinimum: false
+          type: number
+        isUnsecured:
+          type: boolean
+        guarantorRequired:
+          type: boolean
+        insuranceType:
+          type: string
+          enum:
+            - NONE
+            - PAYMENT_PROTECTION
+            - LIFE
+            - DISABILITY
+            - UNEMPLOYMENT
+            - COMPREHENSIVE
+        insurancePremiumRate:
+          maximum: 100
+          exclusiveMaximum: false
+          minimum: 0
+          exclusiveMinimum: false
+          type: number
+        insuranceProvider:
+          maxLength: 255
+          minLength: 0
+          type: string
+        insurancePolicyNumber:
+          maxLength: 100
+          minLength: 0
+          type: string
+        earlyRepaymentPenaltyType:
+          type: string
+          enum:
+            - NONE
+            - FIXED_FEE
+            - PERCENTAGE
+            - SLIDING_SCALE
+        earlyRepaymentPenaltyRate:
+          maximum: 100
+          exclusiveMaximum: false
+          minimum: 0
+          exclusiveMinimum: false
+          type: number
+        earlyRepaymentPenaltyPeriodMonths:
+          maximum: 480
+          minimum: 0
+          type: integer
+          format: int32
+        allowsPartialPrepayment:
+          type: boolean
+        partialPrepaymentMinAmount:
+          minimum: 0
+          exclusiveMinimum: false
+          type: number
+        originationFeeRate:
+          maximum: 100
+          exclusiveMaximum: false
+          minimum: 0
+          exclusiveMinimum: false
+          type: number
+        originationFeeAmount:
+          minimum: 0
+          exclusiveMinimum: false
+          type: number
+        coolingOffPeriodDays:
+          minimum: 0
+          type: integer
+          format: int32
+        maxDeferralCount:
+          minimum: 0
+          type: integer
+          format: int32
+        deferralPeriodMonths:
+          minimum: 0
+          type: integer
+          format: int32
+        agreementSignedDate:
+          type: string
+          format: date
+        agreementEffectiveDate:
+          type: string
+          format: date
+        createdBy:
+          type: string
+          readOnly: true
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedBy:
+          type: string
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+    FilterOptions:
+      type: object
+      properties:
+        caseInsensitiveStrings:
+          type: boolean
+        includeInheritedFields:
+          type: boolean
+      description: Filter options for customizing filter behavior
+    FilterRequestPersonalLoanAgreementDTO:
+      required:
+        - pagination
+      type: object
+      properties:
+        filters:
+          $ref: '#/components/schemas/PersonalLoanAgreementDTO'
+        rangeFilters:
+          $ref: '#/components/schemas/RangeFilter'
+        pagination:
+          $ref: '#/components/schemas/PaginationRequest'
+        options:
+          $ref: '#/components/schemas/FilterOptions'
+      description: Generic filter request that includes both filter criteria and pagination
+    PaginationRequest:
+      type: object
+      properties:
+        pageNumber:
+          type: integer
+          description: The zero-based page number to retrieve.
+          format: int32
+          example: 0
+          default: 0
+        pageSize:
+          type: integer
+          description: The number of items per page.
+          format: int32
+          example: 10
+          default: 10
+        sortBy:
+          type: string
+          description: The field to sort the results by.
+          example: name
+        sortDirection:
+          type: string
+          description: The direction of sorting, either ASC or DESC.
+          example: DESC
+          default: DESC
+      description: Represents a pagination request for retrieving paginated results, including page number, size, sort field, and direction.
+    RangeFilter:
+      type: object
+      properties:
+        ranges:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/RangeObject'
+          description: Map of field names to their range criteria
+      description: Represents range filters for numeric fields
+    RangeObject:
+      type: object
+      properties:
+        from:
+          type: object
+          description: Start value of the range
+        to:
+          type: object
+          description: End value of the range
+      description: Represents a range with from and to values
+    PaginationResponsePersonalLoanAgreementDTO:
+      type: object
+      properties:
+        content:
+          type: array
+          description: The list of items for the current page.
+          items:
+            $ref: '#/components/schemas/PersonalLoanAgreementDTO'
+        totalElements:
+          type: integer
+          description: The total number of elements across all pages.
+          format: int64
+        totalPages:
+          type: integer
+          description: The total number of pages based on the data size and page size.
+          format: int32
+        currentPage:
+          type: integer
+          description: The current page number, typically zero-based.
+          format: int32
+      description: Represents a paginated response containing a list of items and pagination metadata.
