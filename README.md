@@ -216,7 +216,7 @@ The microservice follows a clean, modular architecture:
 
 ## Prerequisites
 
-- **Java Development Kit (JDK) 21** or higher
+- **Java Development Kit (JDK) 25**
 - **Maven 3.8+** for build management
 - **PostgreSQL 13+** for database
 - **Docker** (optional, for containerized deployment)
