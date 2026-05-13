@@ -43,7 +43,7 @@ public class PersonalLoanAgreementController {
     @GetMapping
     @Operation(summary = "List or search personal loan agreements")
     public Mono<ResponseEntity<PaginationResponse<PersonalLoanAgreementDTO>>> findAll(
-            @Valid @RequestBody FilterRequest<PersonalLoanAgreementDTO> filterRequest) {
+            @ModelAttribute FilterRequest<PersonalLoanAgreementDTO> filterRequest) {
         return service.findAll(filterRequest).map(ResponseEntity::ok);
     }
 
