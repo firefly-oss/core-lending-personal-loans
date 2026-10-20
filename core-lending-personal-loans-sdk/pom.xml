@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>core-lending-personal-loans-sdk</artifactId>
+    <name>core-lending-personal-loans-sdk</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
